@@ -1,0 +1,25 @@
+{% extends 'base.html' %} 
+{% block content %}
+
+    <form action="/search">
+        <input type="text" name="q" placeholder="Search for ...." />
+        <input type="submit" value="Submit" />
+    </form>
+    
+    <h1>Blog Posts</h1>
+    
+    <button type="button" class="btn btn-primary"><a href="{% url 'post_add' %}">Add a new Post</a> {% for post in posts %}</button>
+    
+    <hr>
+    
+    <div class="row">
+        <div class="col-sm-12">
+            <h4><a href="{% url 'post_detail' post.id %}">{{post.title.title}}</a></h4>
+        </div>
+        <div class="col-sm-11 col-sm-offset-1">
+            <p> {{ post.content | truncatewords:30 }}</p>
+        </div>
+    </div>
+    <br> 
+{% endfor %}
+{% endblock content %}
