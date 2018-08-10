@@ -15,11 +15,18 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from posts.views import posts_list, post_detail, post_add, search_posts
+from posts.views import posts_list, post_detail, post_add, search_posts, edit_post
+from django.views.static import serve
+from django.conf import settings
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', posts_list, name='posts_list'),
     path('post/<int:id>', post_detail, name="post_detail"),
+    path('post/<int:id>/edit', edit_post, name="edit_post"),
     path('post/add', post_add, name="post_add"),
-    path('search', search_posts, name="search_posts")
+    path('search', search_posts, name="search_posts"),
+    path('media/<path:path>', serve, {'document_root': settings.MEDIA_ROOT}),
+   
+
 ]

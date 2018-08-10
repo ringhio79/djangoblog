@@ -11,7 +11,8 @@ class Post(models.Model):
     published_date = models.DateTimeField(blank=True, null=True, default=timezone.now)
     views = models.IntegerField(default=0)
     tag = models.CharField(max_length=30, blank=True, null=True)
-    author = models.ForeignKey(User, related_name='posts', null=False, default=1, on_delete=models.SET_DEFAULT) 
+    author = models.ForeignKey(User, related_name='posts', null=False, default=1, on_delete=models.SET_DEFAULT)
+    image = models.ImageField(upload_to="images", null=True, blank=True)
     
     def __str__(self):
         return self.title
