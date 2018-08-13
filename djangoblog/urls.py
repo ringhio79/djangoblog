@@ -19,11 +19,23 @@ from posts.views import posts_list, post_detail, post_add, search_posts, edit_po
 from accounts.views import register
 from django.views.static import serve
 from django.conf import settings
+from django.urls import reverse_lazy
+from django.contrib.auth.views import password_reset, password_reset_done, password_reset_confirm, password_reset_complete
+from django.conf.urls import url
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/register/', register, name='register'),
     path('accounts/', include('django.contrib.auth.urls')),
+    
+    path('accounts/password-reset/', password_reset,
+        {'post_reset_redirect': reverse_lazy('password_reset_done')}, name='password_reset'),
+    path('accounts/password-reset/done/', password_reset_done, name='password_reset_done'),
+    url(r'^(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$', password_reset_confirm,
+        {'post_reset_redirect': reverse_lazy('password_reset_complete')}, name='password_reset_confirm'),
+    path('accounts/password-reset/complete/', password_reset_complete, name='password_reset_complete'),
+
+    
     path('', posts_list, name='home'),
     path('', posts_list, name='posts_list'),
     path('post/<int:id>', post_detail, name="post_detail"),
