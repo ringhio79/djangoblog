@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404, redirect, HttpResponse
 from .models import Post
 from .forms import BlogPostForm
 from django.db.models import Q
@@ -13,7 +13,11 @@ def post_detail(request, id):
     post = get_object_or_404(Post, pk=id)
     post.views += 1
     post.save()
-    return render(request, "posts/post_detail.html", {'post': post})
+    
+    can_edit = request.user == post.author or request.user.is_superuser
+    does_like = request.user.profile in post.liked_by.all()
+    
+    return render(request, "posts/post_detail.html", {'post': post, 'can_edit': can_edit, 'does_like': does_like})
     
 def post_add(request):
     if request.method == "POST":
@@ -48,8 +52,17 @@ def edit_post(request, id):
         form=BlogPostForm(instance=post)
         return render(request, "posts/post_form.html", {"form": form})
     
+def like_post(request, id):
+    post=get_object_or_404(Post, pk=id)
+    request.user.profile.likes.add(post)
+    return redirect("post_detail", id=post.id)
     
-    
+
+def unlike_post(request, id):
+    post=get_object_or_404(Post, pk=id)
+    request.user.profile.likes.remove(post)
+    return redirect("post_detail", id=post.id)
+
 def search_posts(request):
     query = request.GET['q']
     
